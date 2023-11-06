@@ -4,7 +4,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def ogura(image: NDArray[np.uint8], poems: List[str], level: int) -> List[int]:
+def solve(image: NDArray[np.uint8], poems: List[str], level: int) -> List[int]:
     """
     Inputs:
       image: input image
