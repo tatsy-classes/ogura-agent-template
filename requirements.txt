@@ -7,6 +7,6 @@ opencv-python
 pytest
 pytest-timeout
 colorama
---index-url https://download.pytorch.org/whl/cpu
-torch==2.0.1
-torchvision==0.15.2
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.0.1+cpu
+torchvision==0.15.2+cpu
