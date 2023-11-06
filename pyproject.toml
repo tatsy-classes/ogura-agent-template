@@ -1,2 +1,2 @@
 [tool.pytest.ini_options]
-addopts = "--tb=line --timeout=300 -s"
+addopts = "--tb=short --timeout=300 -s"

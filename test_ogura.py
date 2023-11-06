@@ -1,6 +1,7 @@
 import os
 
 import cv2
+import numpy as np
 import pytest
 from ogura import solve
 
@@ -24,7 +25,19 @@ def test_solve(path: str):
     level = int(dirname[-1])
 
     image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-    with open(txt_path) as f:
-        poems = [ln.strip() for ln in f.read().split()]
+    poems = []
+    expected = []
+    with open(txt_path) as content:
+        for ln in content:
+            poem, ans = ln.strip().split()
+            poems.append(poem)
+            expected.append(int(ans))
 
-    ans = solve(image, poems, level)
+    print(poems)
+
+    actual = solve(image, poems, level)
+
+    actual = np.array(actual, dtype="uint8")
+    expacted = np.array(expected, dtype="uint8")
+
+    assert (actual == expected).all(), "Your answer is wrong!"
