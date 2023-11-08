@@ -1,10 +1,9 @@
-import glob
 import os
+import glob
 
 import cv2
 import numpy as np
 import pytest
-
 from ogura import solve
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -40,7 +39,7 @@ def check(path: str) -> None:
     image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
     poems = []
     expected = []
-    with open(txt_path) as content:
+    with open(txt_path, mode="r", encoding="utf-8") as content:
         for ln in content:
             poem, ans = ln.strip().split()
             poems.append(poem)

@@ -18,7 +18,16 @@ Windowsの場合にはGitが最初からインストールされていないの�
 - `git`
 - `ssh-keygen`
 
-の2つのコマンドが認識されれば成功。
+の2つのコマンドが認識されるかどうかを確認する。認識されない場合にはWindowsを再起動する。
+
+### Gitクライアントのインストール (Mac向け)
+
+Macの場合は工場出荷時時点で既にGitがインストールされている。ターミナルを開いて
+
+- `git`
+- `ssh-keygen`
+
+の2つのコマンドが認識されるかどうかを確認する。
 
 ### SSHキーの登録
 
@@ -27,54 +36,77 @@ Windowsの場合にはGitが最初からインストールされていないの�
 Windows/Macともに、以下のコマンドで4096ビット長のRSA鍵を作成する。
 
 ```shell
+# SSHキーペア(秘密鍵と公開鍵)の作成。以下のコマンドは4096bit長のRSA暗号を用いる
 ssh-keygen -t rsa -b 4096
 ```
 
 途中、パスワードの入力などを求められるが、特に不要なら入力する必要はない。
 
-コマンドが正しく実行されると、ホームディレクトリの`.ssh`ディレクトリ内に`id_rsa`と`id_rsa.pub`の二つのファイルが生成される。この二つのうち、`id_rsa`の方は秘密鍵、`id_rsa.pub`の方は公開鍵のファイルである。サーバーに登録して良いのは公開鍵の方。
+コマンドが正しく実行されると、ホームディレクトリの`.ssh`ディレクトリ内に`id_rsa`と`id_rsa.pub`の二つのファイルが生成される。この二つのうち、`id_rsa`の方は秘密鍵、`id_rsa.pub`の方は公開鍵のファイルである。サーバーに登録して良いのは公開鍵の方だけなので注意すること。
 
 公開鍵のファイル`id_rsa.pub`を何らかのエディタで開いて、その内容をコピーする。GitHubに移動し、右上のユーザアイコンをクリックし「Settings」を選ぶ。その後、「SSH and GPG keys」を左のメニューから選び、「SSH Keys」の右にある「New SSH key」ボタンを押して、現れるテキストボックスに先ほど`id_rsa.pub`からコピーした内容を貼り付けて、「Add SSH key」を押す。
 
+## 課題テンプレートのダウンロード
+
 ### 課題用レポジトリの作成
 
-講義中に指示する課題作成用URLにアクセスし、手順に従って、課題用のレポジトリである`ogura-agent-username` (usernameの部分は各自のユーザ名)を作成する。
+講義中に指示する課題作成用URLにアクセスし、手順に従うと、課題用のレポジトリである`ogura-agent-username` (usernameの部分は各自のユーザ名)が作成される (`username`の部分は各自のGitHubアカウント名に読み替えること)。
 
 ### レポジトリのクローン
 
-再び、ローカルの環境に戻り、Gitレポジトリをクローンする。正しく、公開鍵が登録されていれば、以下のコマンドでレポジトリがクローンされる。
+再び、ローカル環境に戻り、WindowsならコマンドプロンプトかPowerShell, Macならターミナルを開いて、Gitレポジトリをクローンする。正しく、SSHの公開鍵が登録されていれば、以下のコマンドでレポジトリがクローンされる。
 
 ```shell
+# Gitレポジトリのクローン
 git clone git@github.com:tatsy-classes/ogura-agent-username.git
 ```
 
-### モジュールのインストール
+### 仮想環境の作成
 
-Anacondaを使っている場合は適当な課題用の仮想環境を作成し、その環境下でPipを用いて必要なモジュールをインストールする
+Anacondaを使って適当な課題用の仮想環境を作成し、その環境にPipを用いて必要なモジュールをインストールする。GitHub Actions上の自動採点プログラムはPython 3.9を用いているので、Anacondaの仮想環境もPython 3.9で作成すること。
 
 ```shell
 # 仮想環境の作成
-conda create -n ogura python
+conda create -n ogura python=3.9
 # 仮想環境の切り替え
 conda activate ogura
 # モジュールのインストール
 pip install -r requirements.txt
 ```
 
-
-## 課題の作成方法
+## 課題の作成
 
 ### ソルバー関数の編集
 
-課題用レポジトリ (本レポジトリ)に含まれる `ogura.py`を編集して、正しい数独の解が得られるプログラムに修正する。
+課題用レポジトリ (本レポジトリ)に含まれる `ogura.py`を編集して、課題の目的が達成されるようなプログラムに修正する。編集するべき`solve`関数は以下のような定義になっている。
 
-### テスト方法
+```python
+def solve(image: NDArray[np.uint8], poems: List[str], level: int) -> List[int]:
+    """
+    Inputs:
+      image: input image
+      poems: list of ogura poems
+      level: difficulty level of this problem (1-3)
+    Outputs:
+      answer: list of determination status
+        0: specific poem does not exist in the image
+        1: possible poem can exist in the image, but there remains other possible poems
+        2: the specific poem exist in the card, and there is no other possible poems
+    """
+    return [0] * len(poems)
+```
 
-`data`ディレクトリの中に1枚ずつサンプルの画像が入っているのでそれを利用して良い。また、講義の参加者には`data/samples.zip`の展開用パスワードを指示するので、このZIPファイルに含まれる各レベル5枚のサンプル画像も合わせて使用して良い。準備ができたら、`pytest`を使ってテストを実行する。
+### ローカルでのテスト方法
+
+`data`ディレクトリの中に1枚ずつサンプルの画像が入っているのでそれを利用する。また、講義の参加者には`data/samples.zip`の展開用パスワードを指示するので、このZIPファイルに含まれる各レベル5枚のサンプル画像も合わせて使用して良い。準備ができたら、`pytest`を使ってテストを実行する。
 
 ```shell
-# ログを全て表示する場合
+# 汎用的なテスト
 pytest 
-# 結果だけを表示する場合
-pytest --tb=no -s
+# 実行状況を細かく表示する場合
+pytest --tb=long
 ```
+
+### サーバー上でのテスト方法
+
+
