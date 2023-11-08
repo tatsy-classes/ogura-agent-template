@@ -1,2 +1,2 @@
 [tool.pytest.ini_options]
-addopts = "--tb=short --timeout=300 -s"
+addopts = "--tb=short -s test_ogura.py"

@@ -1,20 +1,33 @@
+import glob
 import os
 
 import cv2
 import numpy as np
 import pytest
+
 from ogura import solve
 
-plane_kana = "かきくけこさしすせそたちつてとはひふへほはひふへほ"
-henka_kana = "がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ"
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(CUR_DIR, "data")
 
 
-@pytest.fixture(scope="session")
-def path(pytestconfig):
-    return pytestconfig.getoption("path")
+def get_test_data():
+    rng = np.random.RandomState(31415)
+
+    levels = [1, 2, 3]
+    data = []
+    for level in levels:
+        image_paths = glob.glob(os.path.join(DATA_DIR, "level{:d}/*.jpg".format(level)))
+        if len(image_paths) > 10:
+            idx = rng.choice(len(image_paths), 10)
+            image_paths = [image_paths[i] for i in idx]
+            image_paths = sorted(image_paths)
+        data.extend([(path, level) for path in image_paths])
+
+    return data
 
 
-def test_solve(path: str):
+def check(path: str) -> None:
     base = os.path.splitext(path)[0]
     img_path = path
     txt_path = base + ".txt"
@@ -33,11 +46,18 @@ def test_solve(path: str):
             poems.append(poem)
             expected.append(int(ans))
 
-    print(poems)
-
     actual = solve(image, poems, level)
 
-    actual = np.array(actual, dtype="uint8")
-    expected = np.array(expected, dtype="uint8")
+    act_np = np.array(actual, dtype="uint8")
+    exp_np = np.array(expected, dtype="uint8")
+    assert (act_np == exp_np).all(), "Your answer is wrong"
 
-    assert (actual == expected).all(), "Your answer is wrong!"
+
+@pytest.mark.parametrize("image_path, level", get_test_data())
+def test_solve(image_path: str, level: int):
+    check(image_path)
+
+
+@pytest.fixture(scope="session")
+def path(pytestconfig):
+    return pytestconfig.getoption("path")

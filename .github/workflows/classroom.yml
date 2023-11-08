@@ -16,15 +16,16 @@ jobs:
     if: github.actor != 'github-classroom[bot]'
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
+          cache: "pip"
       - name: Install dependencies
         run: |
           python -m pip install --quiet --upgrade pip
           pip install --quiet -r requirements.txt
-      - name: Copy test data
+      - name: Generate problems
         uses: tatsy-classes/ogura-autograding@main
       - name: Autograding
         uses: education/autograding@v1
