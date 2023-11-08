@@ -50,7 +50,7 @@ ssh-keygen -t rsa -b 4096
 
 ### 課題用レポジトリの作成
 
-講義中に指示する課題作成用URLにアクセスし、手順に従うと、課題用のレポジトリである`ogura-agent-username` (usernameの部分は各自のユーザ名)が作成される (`username`の部分は各自のGitHubアカウント名に読み替えること)。
+講義中に指示する課題作成用URLにアクセスし、手順に従うと、課題用のレポジトリである`ogura-agent-username`が作成される (`username`の部分は各自のGitHubアカウント名に読み替えること)。
 
 ### レポジトリのクローン
 
