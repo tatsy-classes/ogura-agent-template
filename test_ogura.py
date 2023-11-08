@@ -38,6 +38,6 @@ def test_solve(path: str):
     actual = solve(image, poems, level)
 
     actual = np.array(actual, dtype="uint8")
-    expacted = np.array(expected, dtype="uint8")
+    expected = np.array(expected, dtype="uint8")
 
     assert (actual == expected).all(), "Your answer is wrong!"
