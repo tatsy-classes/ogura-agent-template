@@ -93,7 +93,8 @@ def solve(image: NDArray[np.uint8], poems: List[str], level: int) -> List[int]:
         1: possible poem can exist in the image, but there remains other possible poems
         2: the specific poem exist in the card, and there is no other possible poems
     """
-    return [0] * len(poems)
+    answer = [0] * len(poems)
+    return answer
 ```
 
 ### ローカルでのテスト方法
