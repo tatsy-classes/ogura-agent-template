@@ -13,8 +13,8 @@ def solve(image: NDArray[np.uint8], poems: List[str], level: int) -> List[int]:
     Outputs:
       answer: list of determination status
         0: specific poem does not exist in the image
-        1: possible poem can exist in the image, but there remains other possible poems
-        2: the specific poem exist in the card, and there is no other possible poems
+        1: the specific poem exist in the card, and there is no other possible poems
+        2: possible poem can exist in the image, but there remains other possible poems
     """
     answer = [0] * len(poems)
     return answer
