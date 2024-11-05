@@ -1,2 +1,6 @@
 [tool.pytest.ini_options]
-addopts = "--tb=short -s test_ogura.py"
+minversion = "8"
+xfail_strict = true
+addopts = ["--tb=no", "-s"]
+testpaths = ["test_ogura.py"]
+log_cli_level = "DEBUG"
