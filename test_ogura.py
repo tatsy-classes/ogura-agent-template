@@ -1,27 +1,26 @@
 import os
+import sys
 import glob
+import argparse
+from pathlib import Path
 
 import cv2
 import numpy as np
 import pytest
+
 from ogura import solve
 
-CUR_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(CUR_DIR, "data")
+CUR_DIR: str = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR: str = os.path.join(CUR_DIR, "data")
 
 
-@pytest.fixture(scope="session")
-def path(pytestconfig):
-    return pytestconfig.getoption("path")
-
-
-def get_test_data():
+def get_test_data() -> list[tuple[str, int]]:
     rng = np.random.RandomState(31415)
 
     levels = [1, 2, 3]
     data = []
     for level in levels:
-        image_paths = glob.glob(os.path.join(DATA_DIR, "level{:d}/*.jpg".format(level)))
+        image_paths = glob.glob(str(Path(DATA_DIR) / f"level{level:d}/*.jpg"))
         if len(image_paths) > 10:
             idx = rng.choice(len(image_paths), 10)
             image_paths = [image_paths[i] for i in idx]
@@ -31,32 +30,41 @@ def get_test_data():
     return data
 
 
-def check(path: str) -> None:
-    base = os.path.splitext(path)[0]
-    img_path = path
-    txt_path = base + ".txt"
-    assert os.path.exists(img_path), f"Image file not found: {img_path:s}"
-    assert os.path.exists(txt_path), f"Text file not found: {txt_path:s}"
+def check(path: str, level: int) -> None:
+    img_path = Path(path)
+    txt_path = img_path.with_suffix(".txt")
+    assert img_path.exists(), f"Image file not found: {str(img_path):s}"
+    assert txt_path.exists(), f"Text file not found: {str(txt_path):s}"
 
-    dirname = os.path.basename(os.path.dirname(img_path))
-    level = int(dirname[-1])
+    # load input image
+    image = cv2.imread(str(img_path), cv2.IMREAD_COLOR)
+    if image is None:
+        raise FileNotFoundError(f"Failed to read image file: {img_path:s}")
 
-    image = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-    poems = []
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = image.astype("uint8")
+
+    kami = []
     expected = []
     with open(txt_path, mode="r", encoding="utf-8") as content:
         for ln in content:
-            poem, ans = ln.strip().split()
-            poems.append(poem)
-            expected.append(int(ans))
+            kami.append(ln.strip().split()[0])
+            expected.append(int(ln.strip().split()[1]))
 
-    actual = solve(image, poems, level)
-
-    act_np = np.array(actual, dtype="uint8")
-    exp_np = np.array(expected, dtype="uint8")
-    assert (act_np == exp_np).all(), "Your answer is wrong"
+    predicted = solve(image, kami, level)
+    for e, p in zip(expected, predicted):
+        assert e == p, f"Expected: {e:d}, Predicted: {p:d}"
 
 
 @pytest.mark.parametrize("image_path, level", get_test_data())
-def test_solve(image_path: str, level: int):
-    check(image_path)
+def test_solve(image_path: str, level: int) -> None:
+    check(image_path, level)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image_path", type=str, help="Path to the image file")
+    parser.add_argument("level", type=int, help="Level of the problem")
+    args = parser.parse_args()
+
+    check(args.image_path, args.level)

@@ -1,7 +1,13 @@
 百人一首エージェントの作成
-===
+==========================
 
-## 準備
+<details>
+<summary>
+
+準備
+----
+
+</summary>
 
 ### GitHubのアカウントを作成
 
@@ -42,11 +48,17 @@ ssh-keygen -t rsa -b 4096
 
 途中、パスワードの入力などを求められるが、特に不要なら入力する必要はない。
 
-コマンドが正しく実行されると、ホームディレクトリの`.ssh`ディレクトリ内に`id_rsa`と`id_rsa.pub`の二つのファイルが生成される。この二つのうち、`id_rsa`の方は秘密鍵、`id_rsa.pub`の方は公開鍵のファイルである。サーバーに登録して良いのは公開鍵の方だけなので注意すること。
+コマンドが正しく実行されると、ホームディレクトリの`.ssh`ディレクトリ内に`id_rsa`と`id_rsa.pub`の二つのファイルが生成される。
+この二つのうち、`id_rsa`の方は秘密鍵、`id_rsa.pub`の方は公開鍵のファイルである。サーバーに登録して良いのは公開鍵の方だけなので注意すること。
 
-公開鍵のファイル`id_rsa.pub`を何らかのエディタで開いて、その内容をコピーする。GitHubに移動し、右上のユーザアイコンをクリックし「Settings」を選ぶ。その後、「SSH and GPG keys」を左のメニューから選び、「SSH Keys」の右にある「New SSH key」ボタンを押して、現れるテキストボックスに先ほど`id_rsa.pub`からコピーした内容を貼り付けて、「Add SSH key」を押す。
+公開鍵のファイル`id_rsa.pub`を何らかのエディタで開いて、その内容をコピーする。GitHubに移動し、右上のユーザアイコンをクリックし「Settings」を選ぶ。
+その後、「SSH and GPG keys」を左のメニューから選び、「SSH Keys」の右にある「New SSH key」ボタンを押して、
+現れるテキストボックスに先ほど`id_rsa.pub`からコピーした内容を貼り付けて、「Add SSH key」を押す。
 
-## 課題テンプレートのダウンロード
+</details>
+
+課題テンプレートのダウンロード
+------------------------------
 
 ### 課題用レポジトリの作成
 
@@ -63,45 +75,35 @@ git clone git@github.com:tatsy-classes/ogura-agent-username.git
 
 ### 仮想環境の作成
 
-Anacondaを使って適当な課題用の仮想環境を作成し、その環境にPipを用いて必要なモジュールをインストールする。GitHub Actions上の自動採点プログラムはPython 3.9を用いているので、Anacondaの仮想環境もPython 3.9で作成すること。
+Anacondaを使って適当な課題用の仮想環境を作成し、その環境にPipを用いて必要なモジュールをインストールする。
+GitHub Actions上の自動採点プログラムはPython 3.10を用いているので、Anaconda等を用いる場合は仮想環境をPython 3.10で作成すると良い。
+
+以下では、`.venv`というディレクトリにvenvの仮想開発環境を作る方法を示す。
 
 ```shell
 # 仮想環境の作成
-conda create -n ogura python=3.9
+python -m venv .venv
 # 仮想環境の切り替え
-conda activate ogura
+.venv/Scripts/activate  # Windows
+source .venv/bin/activate  # Mac/Linux
 # モジュールのインストール
 pip install -r requirements.txt
 ```
 
-## 課題の作成
+課題の作成
+----------
 
 ### ソルバー関数の編集
 
-課題用レポジトリ (本レポジトリ)に含まれる `ogura.py`を編集(**ファイル名は変更しないこと**)して、課題の目的が達成されるようなプログラムに修正する。編集するべき`solve`関数は以下のような定義になっている。
+課題用レポジトリ (本レポジトリ)に含まれる `ogura.py`を編集(**ファイル名は変更しないこと**)して、課題の目的が達成されるようなプログラムに修正する。
 
-```python
-def solve(image: NDArray[np.uint8], poems: List[str], level: int) -> List[int]:
-    """
-    Inputs:
-      image: input image
-      poems: list of ogura poems
-      level: difficulty level of this problem (1-3)
-    Outputs:
-      answer: list of determination status
-        0: specific poem does not exist in the image
-        1: possible poem can exist in the image, but there remains other possible poems
-        2: the specific poem exist in the card, and there is no other possible poems
-    """
-    answer = [0] * len(poems)
-    return answer
-```
+### テスト方法
 
-### ローカルでのテスト方法
+`ogura.py`が編集できたら、最初にローカル環境でテストを実施する。`data`ディレクトリの中に1枚ずつサンプルの画像が入っているので、まずはそれを利用する。
 
-`ogura.py`が編集できたら、最初にローカル環境でテストを実施する。`data`ディレクトリの中に1枚ずつサンプルの画像が入っているのでそれを利用してよい。
+また、講義の参加者には`data/samples.zip`の展開用パスワードを指示するので、このZIPファイルに含まれる各レベル5枚のサンプル画像も使用して良い。
 
-また、講義の参加者には`data/samples.zip`の展開用パスワードを指示するので、このZIPファイルに含まれる各レベル5枚のサンプル画像も合わせて使用すること。ZIPファイルを展開すると`level1`から`level3`のフォルダが得られるので、これを`data/level1`から`data/level3`にそれぞれ上書きする。
+ZIPファイルを展開すると`level1`から`level3`のフォルダが得られるので、これを`data/level1`から`data/level3`にそれぞれ上書きする。
 
 準備ができたら、`pytest`を使ってテストを実行する。
 
@@ -135,5 +137,16 @@ git push origin master
 
 ### 実行時間の制約
 
-実行時間は1問当たり最大1分とする。それ以上が経過すると、自動的にプログラムが終了するので注意すること。
+実行時間は1問当たり最大15秒とする。それ以上が経過すると、自動的にプログラムが終了するので注意すること。
 
+課題の提出方法
+--------------
+
+プログラムの作成が終了したら、Google Classroomから、
+
+- 採点してほしいコミットのSHA値
+- 取組内容を説明したレポート (目安A4用紙1毎程度. PDF, Microsoft Wordのいずれか)
+
+の2つを提出する。
+
+コミットのSHA値の取得方法については、講義資料中の[SHA値の取得方法](https://tatsy-classes.github.io/1284-sds-advml/contents/appendix/submit-assignment.html#sha)を参照のこと。

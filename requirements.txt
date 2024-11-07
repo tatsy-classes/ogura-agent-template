@@ -1,15 +1,25 @@
-numpy
-pandas
+numpy==1.26.4
 scipy
+pandas
+seaborn
 matplotlib
+japanize-matplotlib
 scikit-learn
+pillow
 opencv-python
 requests
-pytest
+tqdm
 colorama
-tensorflow==2.14.0
-keras
+pytest
 
---find-links https://download.pytorch.org/whl/torch_stable.html
-torch==2.0.1+cpu
-torchvision==0.15.2+cpu
+# modules below are for deep learning
+tensorflow
+keras
+torch==2.2.2
+torchvision==0.17.2
+
+# modules below are for linting
+pyproject-flake8
+mypy
+isort
+black
