@@ -4,7 +4,7 @@
 <details>
 <summary>
 
-準備
+準備 (全課題共通)
 ----
 
 </summary>
@@ -62,14 +62,15 @@ ssh-keygen -t rsa -b 4096
 
 ### 課題用レポジトリの作成
 
-講義中に指示する課題作成用URLにアクセスし、手順に従うと、課題用のレポジトリである`ogura-agent-username`が作成される (`username`の部分は各自のGitHubアカウント名に読み替えること)。
+講義中に指示する[GitHub Classroom](https://classroom.github.com/classrooms)の課題作成用URLにアクセスし、
+手順に従うと、課題用のレポジトリである`ogura-agent-username`が作成される (`username`の部分は各自のGitHubアカウント名に読み替えること)。
 
 ### レポジトリのクローン
 
 再び、ローカル環境に戻り、WindowsならコマンドプロンプトかPowerShell, Macならターミナルを開いて、Gitレポジトリをクローンする。正しく、SSHの公開鍵が登録されていれば、以下のコマンドでレポジトリがクローンされる。
 
 ```shell
-# Gitレポジトリのクローン
+# Gitレポジトリのクローン (usernameの部分は各自のものに読み替える)
 git clone git@github.com:tatsy-classes/ogura-agent-username.git
 ```
 
